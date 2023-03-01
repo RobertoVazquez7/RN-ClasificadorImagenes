@@ -32,9 +32,9 @@ def main():
     modelo = Sequential([
         data_augmentation,
             layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-            layers.Conv2D(32, 3, padding='same', activation='relu'),
+            layers.Conv2D(60, 3, padding='same', activation='relu'),
             layers.MaxPooling2D(3,3),
-            layers.Conv2D(64, 3, padding='same', activation='relu'),
+            layers.Conv2D(60, 3, padding='same', activation='relu'),
             layers.MaxPooling2D(3,3),
             layers.Dropout(0.2),
             layers.Flatten(),
