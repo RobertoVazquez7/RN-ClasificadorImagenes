@@ -1,17 +1,12 @@
-from matplotlib.cbook import flatten
-import numpy as np
-import matplotlib.pyplot as plt
-from pyparsing import java_style_comment
 import tensorflow as tf
-from tensorflow import keras
+import seaborn as sns
 from keras import layers
 from keras.models import Sequential
-import seaborn as sns
-from tkinter import *
 
-ventana = Tk()
-ventana.title('IA - Actividad 3, Corte 2')
-ventana.geometry('400x200')
+from tkinter import *
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 def main():
 
@@ -21,14 +16,8 @@ def main():
     img_height = 100 # alto
     img_width = 100 # ancho
 
-    train_ds = tf.keras.utils.image_dataset_from_directory(
-        "./data/Entrenamiento",
-        image_size=(img_height, img_width),
-        batch_size=batch_size)
-    val_ds = tf.keras.utils.image_dataset_from_directory(
-        "./data/Validacion",
-        image_size=(img_height, img_width),
-        batch_size=batch_size)
+    train_ds = tf.keras.utils.image_dataset_from_directory("./data/Entrenamiento",image_size=(img_height, img_width),batch_size=batch_size)
+    val_ds = tf.keras.utils.image_dataset_from_directory("./data/Validacion",image_size=(img_height, img_width),batch_size=batch_size)
     class_names = train_ds.class_names
     print(class_names)
 
@@ -41,27 +30,24 @@ def main():
         tf.keras.layers.RandomZoom(0.1),])
 
     modelo = Sequential([
-    data_augmentation,
-    layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-    layers.Conv2D(32, 3, padding='same', activation='relu'),
-    layers.MaxPooling2D(3,3),
-    layers.Conv2D(64, 3, padding='same', activation='relu'),
-    layers.MaxPooling2D(3,3),
-    layers.Dropout(0.2),
-    layers.Flatten(),
-    layers.Dense(50, activation='relu'),
-    layers.Dense(50, activation='relu'),
-    layers.Dense(num_clases)
-    ])
-    modelo.compile(optimizer='adam',
-              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-              metrics=['accuracy'])
+        data_augmentation,
+            layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
+            layers.Conv2D(32, 3, padding='same', activation='relu'),
+            layers.MaxPooling2D(3,3),
+            layers.Conv2D(64, 3, padding='same', activation='relu'),
+            layers.MaxPooling2D(3,3),
+            layers.Dropout(0.2),
+            layers.Flatten(),
+            layers.Dense(50, activation='relu'),
+            layers.Dense(50, activation='relu'),
+            layers.Dense(num_clases)
+        ])
+
+    modelo.compile(optimizer='adam',loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),metrics=['accuracy'])
     modelo.summary()
+
     #epochs = 50
-    history = modelo.fit(
-    train_ds,
-    validation_data=val_ds,
-    epochs=epocas)
+    history = modelo.fit(train_ds,validation_data=val_ds,epochs=epocas)
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
 
@@ -114,11 +100,14 @@ def main():
     plt.ylabel('Datos')
     plt.show()
 
-label = Label(ventana, text='Ingrese cantidad de epocas de entrenamiento:').place(x=80, y=10)
 
+ventana = Tk()
+ventana.title('IA - Actividad 3, Corte 2')
+ventana.geometry('400x200')
+
+label = Label(ventana, text='Ingrese cantidad de epocas de entrenamiento:').place(x=80, y=10)
 cantidad_epocas = Entry(ventana)
 cantidad_epocas.place(x=140, y=60)
-
-button = Button(ventana, text='Aceptar', command=main).place(x=180, y=100)
+button = Button(ventana, text='Aceptar', command=lambda:main()).place(x=180, y=100)
 
 ventana.mainloop()
