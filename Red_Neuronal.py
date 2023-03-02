@@ -32,14 +32,16 @@ def main():
     modelo = Sequential([
         data_augmentation,
             layers.Rescaling(1./255, input_shape=(img_height, img_width, 3)),
-            layers.Conv2D(60, 3, padding='same', activation='relu'),
+            layers.Conv2D(16, 3, padding='same', activation='relu'),
             layers.MaxPooling2D(3,3),
-            layers.Conv2D(60, 3, padding='same', activation='relu'),
+            layers.Conv2D(32, 3, padding='same', activation='relu'),
             layers.MaxPooling2D(3,3),
-            layers.Dropout(0.2),
+            layers.Conv2D(64, 3, padding='same', activation='relu'),
+            layers.MaxPooling2D(3,3),
+            # layers.Dropout(0.2),
             layers.Flatten(),
             layers.Dense(50, activation='relu'),
-            layers.Dense(50, activation='relu'),
+            # layers.Dense(50, activation='relu'),
             layers.Dense(num_clases)
         ])
 
@@ -48,13 +50,14 @@ def main():
 
     #epochs = 50
     history = modelo.fit(train_ds,validation_data=val_ds,epochs=epocas)
+
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
 
     loss = history.history['loss']
     val_loss = history.history['val_loss']
 
-    epochs_range = range(epocas)
+    epochs_range = range(1,epocas+1)
 
     plt.figure(figsize=(8, 8))
     plt.subplot(1, 2, 1)
@@ -89,12 +92,16 @@ def main():
     y_true = np.asarray(test_labels).flatten()
     test_acc = sum(y_pred == y_true) / len(y_true)
     print(("Test accuracy: {:.2f}%".format(test_acc * 100)))
+
+
     consfusion_matrix = tf.math.confusion_matrix(y_true, y_pred)
+
     plt.figure(figsize=(10, 10))
     sns.heatmap(consfusion_matrix.numpy(), 
-    xticklabels=class_names,
-    yticklabels=class_names, 
-    annot=True, fmt="d")
+        xticklabels=class_names,
+        yticklabels=class_names, 
+        annot=True, fmt="d")
+    
     plt.title('Matriz de confusion')
     plt.xlabel('Predicciones')
     plt.ylabel('Datos')
